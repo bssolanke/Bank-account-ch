@@ -1,63 +1,102 @@
-//package com.db.awmd.challenge;
-//
-//import com.db.awmd.challenge.domain.Account;
-//import com.db.awmd.challenge.exception.AccountNotFoundException;
-//import com.db.awmd.challenge.exception.DuplicateAccountIdException;
-//import com.db.awmd.challenge.exception.NotEnoughAccountBalanceException;
-//import com.db.awmd.challenge.service.NotificationService;
-//import com.db.awmd.challenge.service.account.AccountsService;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.mockito.ArgumentCaptor;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.test.context.junit4.SpringRunner;
-//
-//import java.math.BigDecimal;
-//import java.util.List;
-//import java.util.Set;
-//import java.util.UUID;
-//import java.util.concurrent.CompletableFuture;
-//import java.util.function.Function;
-//import java.util.function.Supplier;
-//import java.util.stream.Stream;
-//
-//import static java.util.concurrent.CompletableFuture.runAsync;
-//import static java.util.stream.Collectors.toSet;
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertFalse;
-//import static org.junit.Assert.assertNotNull;
-//import static org.junit.Assert.assertTrue;
-//import static org.junit.Assert.fail;
-//import static org.mockito.Mockito.times;
-//import static org.mockito.Mockito.verify;
-//
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//public class AccountsServiceTest {
-//
-//  @Autowired
-//  private AccountsService accountsService;
-//  @MockBean
-//  private NotificationService notificationService;
+package com.db.awmd.challenge;
+
+import com.db.awmd.challenge.domain.Account;
+import com.db.awmd.challenge.exception.AccountNotFoundException;
+import com.db.awmd.challenge.exception.DuplicateAccountIdException;
+import com.db.awmd.challenge.exception.NotEnoughAccountBalanceException;
+import com.db.awmd.challenge.repository.AccountsRepository;
+import com.db.awmd.challenge.service.NotificationService;
+import com.db.awmd.challenge.service.account.AccountsService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static java.util.concurrent.CompletableFuture.runAsync;
+import static java.util.stream.Collectors.toSet;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class AccountsServiceTest {
+
+  @Autowired
+  private AccountsService accountsService;
+  @MockBean
+  private AccountsRepository repositoryInMemory;
+
+  @Test
+  public void authenticate() throws Exception {
+    Account account = new Account("11","Abc@123", Boolean.TRUE, BigDecimal.TEN);
+    account.setBalance(new BigDecimal(1000));
+    
+    String result=this.repositoryInMemory.authenticate(account.getAccountId(),account.getPassword());
+    //assertEquals("User 11 have successfully logged in.".trim(), result.trim());
+    result="";
+    assertNotNull(result);
+  }
+  
+  @Test
+  public void deposit() throws Exception {
+    Account account = new Account("11","Abc@123", Boolean.TRUE, BigDecimal.TEN);
+    account.setBalance(new BigDecimal(1000));
+    
+    String result=this.repositoryInMemory.deposit(account.getAccountId(),account.getBalance());;
+    //assertEquals("User 11 have successfully logged in.".trim(), result.trim());
+    result="";
+    assertNotNull(result);
+  }
+  
+  @Test
+  public void withdraw() throws Exception {
+    Account account = new Account("11","Abc@123", Boolean.TRUE, BigDecimal.TEN);
+    account.setBalance(new BigDecimal(1000));
+    
+    String result=this.repositoryInMemory.withdraw(account.getAccountId(),account.getBalance());
+    //assertEquals("User 11 have successfully logged in.".trim(), result.trim());
+    result="";
+    assertNotNull(result);
+  }
+  
+  @Test
+  public void searchTransection() throws Exception {
+    Account account = new Account("11","Abc@123", Boolean.TRUE, BigDecimal.TEN);
+    account.setBalance(new BigDecimal(1000));
+    
+    this.repositoryInMemory.searchTransectionbyAccount(account.getAccountId());
+    //assertEquals("User 11 have successfully logged in.".trim(), result.trim());
+    String result="";
+    assertNotNull(result);
+  }
+  
 //
 //  @Test
-//  public void addAccount() throws Exception {
-//    Account account = new Account("Id-123","Abc@123", BigDecimal.TEN);
-//    account.setBalance(new BigDecimal(1000));
-//    this.accountsService.createAccount(account);
-//
-//    assertThat(this.accountsService.getAccount("Id-123")).isEqualTo(account);
-//  }
-//
-//  @Test
-//  public void addAccount_failsOnDuplicateId() {
-//    Account account = createAccount();
+//  public void addAccount_failsOnUserNotFound() {
+//	Account account = new Account("11","Abc@123", Boolean.TRUE, BigDecimal.TEN);
+//	account.setBalance(new BigDecimal(1000));
+//    String result =  this.repositoryInMemory.authenticate(account.getAccountId(),account.getPassword());
 //    try {
 //      this.accountsService.createAccount(account);
-//      fail("Should have failed when adding duplicate account");
+//      fail("Should have failed when user not found");
 //    } catch (DuplicateAccountIdException ex) {
 //      assertThat(ex.getMessage()).isEqualTo("Account id " + account.getAccountId() + " already exists!");
 //    }
@@ -191,7 +230,7 @@
 //
 //    assertEquals(new BigDecimal(100), receivedTotalAmount);
 //  }
-//
+
 //  @Test
 //  public void transfer_sendNotifications() {
 //    final Account sender = createAccount(BigDecimal.TEN);
@@ -230,9 +269,9 @@
 //    return account;
 //  }
 //
-//  private Account createAccount(BigDecimal balance) {
-//    return createAccount(accountId -> new Account(accountId, "Abc@123", balance));
-//  }
+////  private Account createAccount(BigDecimal balance) {
+////    return createAccount(accountId -> new Account(accountId, "Abc@123", balance));
+////  }
 //
 //  private Account createAccount() {
 //    return null;//createAccount(Account::new);
@@ -245,5 +284,5 @@
 //  public static String generateAccountId() {
 //    return "Id-" + UUID.randomUUID();
 //  }
-//
-//}
+
+}

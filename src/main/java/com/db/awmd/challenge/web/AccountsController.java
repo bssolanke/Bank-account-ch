@@ -33,7 +33,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/accounts")
-@Slf4j
+//@Slf4j
 public class AccountsController {
 
   private final AccountsService accountsService;
@@ -69,7 +69,7 @@ public class AccountsController {
    */
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @RequestMapping("/lockUnlockAccount")
-  public ResponseEntity<Object> lockUnlockAccount(@RequestBody @Valid @RequestParam String accountId) {
+  public ResponseEntity<Object> lockUnlockAccount(@RequestBody @Valid @RequestParam("accountId") String accountId) {
     System.out.println("lockUnlockAccount account {}"+ accountId);
     String response=new String();
     try {
